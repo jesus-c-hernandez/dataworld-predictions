@@ -1,22 +1,21 @@
-require('dotenv').config();
-const axios = require('axios');
-let counter = 0;
+var brain = require('brain.js'); // require
 
-const getWeather = async(cityId, start) => {
-  try {
-    const resp = await axios.get(`${process.env.OPW_DIR}id=${cityId}&type=hour&appid=${process.env.API_KEY_OP_1}&start=${start}&cnt=24`);
-    return resp.data.list;
-  } catch (error) {
-    try {
-      const resp = await axios.get(`${process.env.OPW_DIR}id=${cityId}&type=hour&appid=${process.env.API_KEY_OP_2}&start=${start}&cnt=24`);
-      return resp.data.list;
-    } catch (error) {
-      const resp = await axios.get(`${process.env.OPW_DIR}id=${cityId}&type=hour&appid=${process.env.API_KEY_OP_3}&start=${start}&cnt=24`);
-      return resp.data.list;
-    }
-  }
+const predictionsWeather = async(cityId, data) => {
+
+  const net = new brain.recurrent.LSTMTimeStep()
+
+  let trainData = []
+  data.forEach((element) => {
+    trainData.push(Number(element.temp))
+  })
+  let hola = [trainData]
+  net.train(hola)
+
+  /* Predicción */
+  var result = net.run([23, 90]);
+  console.log(Math.round(result));
 }
 
 module.exports = {
-  getWeather
+  predictionsWeather
 }
