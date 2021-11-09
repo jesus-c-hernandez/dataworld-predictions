@@ -6,42 +6,44 @@ const asyncForEach = async(array, callback) => {
   }
 }
 
-const formatCovidAux = (covidData) => {
-  const auxCovid = {
-    date: covidData.date,
-    dateQuery: moment(covidData.date).format("DD-MM-YYYY"),
-    country: covidData.country,
-    data: covidData.data
+const formatWeatherDB = (weatherData) => {
+  let data = []
+  weatherData.forEach((element) => {
+    data.push(element._doc);
+  })
+  return data
+}
+
+const formatFechasPast = () => {
+  const days = []
+    // Días atras
+  for (let i = 2; i > 0; i--) {
+    let d = new Date(new Date() - (1000 * 60 * 60 * 24 * i)).setFullYear(2020)
+    days.push(new Date(d));
   }
-  return auxCovid
-}
+  //Hoy
+  days.push(new Date(new Date()).setFullYear(2020))
 
-const formatCovidPast = (currentData, pastData) => {
-  const auxCovid = {
-    date: currentData.date,
-    dateQuery: moment(currentData.date).format("DD-MM-YYYY"),
-    country: currentData.country,
-    data: formatDataNumber(currentData.data, pastData.data)
-  }
-  return auxCovid
-}
+  // Días futuro
+  let i = 1
+  do {
+    const today = new Date()
+    const tomorrow = new Date(today)
+    tomorrow.setDate(tomorrow.getDate() + i)
+    days.push(new Date(tomorrow.setFullYear(2020)))
+    i++
+  } while (i <= 2);
 
-const formatDataNumber = (cData, pData) => {
-  if (pData && pData > 0)
-    return (cData - pData)
-  else
-    return cData
-}
-
-const formatDataNumber = (cData, pData) => {
-  if (pData && pData > 0)
-    return (cData - pData)
-  else
-    return cData
+  //Formato
+  let dateRange = []
+  days.forEach((element) => {
+    dateRange.push(new Date(element))
+  })
+  return dateRange
 }
 
 module.exports = {
   asyncForEach,
-  formatCovidAux,
-  formatCovidPast
+  formatWeatherDB,
+  formatFechasPast
 }
