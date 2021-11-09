@@ -1,5 +1,6 @@
 const Weather = require('../models/weather.model')
 const WeatherPrediction = require('../models/weather-pred.model')
+const { formatFechasPast } = require('../utils/utils');
 const mongoose = require('mongoose');
 
 const createWeatherPrediction = async(auxWeather) => {
@@ -13,11 +14,13 @@ const createWeatherPrediction = async(auxWeather) => {
 
 const getWeather = async(cityId) => {
   try {
-    // let d = new Date(new Date() - (1000 * 60 * 60 * 24 * 5)).setFullYear(2020)
-    // let dateRange = new Date(d)
-    let d = new Date("2020-10-29T12:00:00.000+00:00")
-      // let dateRange = new Date(d)
-    return Weather.find({ cityId: cityId, date: { "$gte": d } });
+    let dateRange = formatFechasPast()
+    let dataCruda = await Weather.find({
+      cityId: cityId,
+      date: { "$gte": new Date(dateRange[0]) },
+      "$lte": new Date(dateRange[dateRange.length - 1])
+    });
+    return dataCruda
   } catch (error) {
     console.log(error);
   }

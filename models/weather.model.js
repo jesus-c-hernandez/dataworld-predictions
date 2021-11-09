@@ -5,13 +5,14 @@ const WeatherSchema = Schema({
   cityName: String,
   country: String,
   date: Date,
-  temp: String,
-  tempMin: String,
-  tempMax: String,
-  feelsLike: String,
-  windSpeed: String,
-  windDeg: String,
-  weatherMain: String
+  temp: Number,
+  tempMin: Number,
+  tempMax: Number,
+  feelsLike: Number,
+  windSpeed: Number,
+  windDeg: Number,
+  weatherMain: String,
+  weatherMainCode: Number
 });
 
 WeatherSchema.method('toJSON', function() {

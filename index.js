@@ -6,19 +6,16 @@ const { dbConnection } = require("./database/config");
 const { getWeather } = require("./repositories/weather.repository");
 const { predictionsWeather } = require("./services/weather.service");
 let isDBOnline = false;
-let start = 1604019600; // 29/10/2020 01:00:00
-let counter = 0;
 
 const initWeatherPredictions = async() => {
   // Obtener el arreglo de las ciudades
   await asyncForEach(cityList, async(city) => {
     // Hacer la peticion al bd para tener los datos de los 5 días atras
     const weatherDB = await getWeather(city.id)
-
-    // Dar formato al resultado de la bd
+      // Dar formato al resultado de la bd
     const weatherDBFormat = formatWeatherDB(weatherDB)
       // Predecir el clima de los proximos 5 días
-    const prediciones = predictionsWeather(city.id, weatherDBFormat)
+    const prediciones = await predictionsWeather(city.id, weatherDBFormat)
 
     // Guardar los datos en db
     // await saveWeather(city.id, city.name, city.country, listWeather);
