@@ -16,7 +16,7 @@ const getWeather = async(cityId) => {
   try {
     let dateRange = formatFechasPast()
     let dataCruda = await Weather.find({
-      cityId: cityId,
+      // cityId: cityId,
       date: { "$gte": new Date(dateRange[0]) },
       "$lte": new Date(dateRange[dateRange.length - 1])
     });
