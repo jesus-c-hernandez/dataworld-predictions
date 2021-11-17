@@ -15,7 +15,7 @@ const initWeatherPredictions = async() => {
     // Dar formato al resultado de la bd
     const weatherDBFormat = formatWeatherDB(weatherDB)
       // Predecir el clima de los proximos 5 días
-    let n = weatherDBFormat.map(w => Number(w.cityId) === city.id)
+    let n = weatherDBFormat.filter(w => Number(w.cityId) === city.id)
     const prediciones = await predictionsWeather(city.id, n)
     console.log(prediciones);
     // Guardar los datos en db
