@@ -5,7 +5,8 @@ const WeatherPredictionTempSchema = Schema({
   cityName: String,
   country: String,
   date: Date,
-  temp: String,
+  weatherMainCode: Number,
+  weatherMain: String,
   tempMin: String,
   tempMax: String
 });
