@@ -1,4 +1,5 @@
 const { createWeatherPrediction } = require("../repositories/weather.repository");
+const { asyncForEach } = require("../utils/utils");
 const brain = require('brain.js'); // require
 require('dotenv').config();
 const axios = require('axios');
@@ -9,34 +10,52 @@ const predictionsWeather = async(cityId, data) => {
   const net = new brain.recurrent.LSTMTimeStep()
 
   // Temperatura. 
-  // let trainDataTemp = []
-  // data.forEach((element) => {
-  //   trainDataTemp.push(Number(element.temp))
-  // })
-  // net.train([trainDataTemp])
-
-  const daysPast = []
-    // Días atras
-  for (let i = 2; i > 0; i--) {
-    let d = new Date(new Date() - (1000 * 60 * 60 * 24 * i)).getTime() / 1000
-    daysPast.push(d);
-  }
-  console.log(daysPast);
-
-  let dataAPI = []
-  daysPast.forEach(async(element) => {
-    let data = await getWeather(cityId, Math.round(element))
-    dataAPI.push(data)
+  let trainDataTemp = []
+  data.forEach((element) => {
+    trainDataTemp.push(Number(element.tempMin))
   })
 
+  net.train([trainDataTemp])
+
+
+  let daysPast = await getWeatherPast(cityId)
+  let result = []
   let i = 0
+  let dayPastTempMin = []
+  daysPast.forEach((e) => {
+    dayPastTempMin.push(e.temp_min)
+  })
   do {
-    /* Predicción */
-    var temp = net.run(dataAPI);
-    console.log(Math.round(temp));
-    trainDataTemp.push(Math.round(temp))
+    /* Predicción Temp Minima */
+    var temp = net.run(dayPastTempMin);
+    console.log(Math.round(temp))
+    dayPastTempMin.push(Math.round(temp))
+    result.push(temp)
     i++
   } while (i < 5);
+  return result
+}
+
+const getWeatherPast = async(cityId) => {
+  const dataDays = []
+  const dataWeather = []
+    //2  Días atras
+  for (let i = 2; i > 0; i--) {
+    let dt = new Date(new Date() - (1000 * 60 * 60 * 24 * i))
+    let dtEpoch = Math.floor(dt / 1000)
+    dataDays.push(dtEpoch);
+  }
+  for (let i = 0; i < dataDays.length; i++) {
+    let data = await getWeather(cityId, dataDays[i])
+    data.forEach((element) => {
+      let obj = {
+        temp_max: Math.round(element.main.temp_max - 273),
+        temp_min: Math.round(element.main.temp_min - 273)
+      }
+      dataWeather.push(obj)
+    })
+  }
+  return dataWeather
 }
 
 const getWeather = async(cityId, start) => {

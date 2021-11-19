@@ -9,14 +9,15 @@ let isDBOnline = false;
 
 const initWeatherPredictions = async() => {
   // Obtener el arreglo de las ciudades
+  // Hacer la peticion al bd para tener los datos de los 5 días atras
+  const weatherDB = await getWeather()
   await asyncForEach(cityList, async(city) => {
-    // Hacer la peticion al bd para tener los datos de los 5 días atras
-    const weatherDB = await getWeather(city.id)
-      // Dar formato al resultado de la bd
+    // Dar formato al resultado de la bd
     const weatherDBFormat = formatWeatherDB(weatherDB)
       // Predecir el clima de los proximos 5 días
-    const prediciones = await predictionsWeather(city.id, weatherDBFormat)
-
+    let n = weatherDBFormat.filter(w => Number(w.cityId) === city.id)
+    const prediciones = await predictionsWeather(city.id, n)
+    console.log(prediciones);
     // Guardar los datos en db
     // await saveWeather(city.id, city.name, city.country, listWeather);
   });
@@ -38,6 +39,7 @@ const stringTimes = {
   30: "*/30 * * * * *",
   120: "*/2 * * * *",
   15: "*/15 * * * * *",
+  10: "*/10 * * * * *",
   20: "*/20 * * * * *",
   1: "*/1 * * * * *"
 };
