@@ -1,7 +1,6 @@
 const Weather = require('../models/weather.model')
 const WeatherPrediction = require('../models/weather-pred.model')
 const { formatFechasPast } = require('../utils/utils');
-const mongoose = require('mongoose');
 
 const createWeatherPrediction = async(auxWeather) => {
   try {
@@ -12,7 +11,7 @@ const createWeatherPrediction = async(auxWeather) => {
   }
 }
 
-const getWeather = async(cityId) => {
+const getWeatherDB = async(cityId) => {
   try {
     let dateRange = formatFechasPast()
     let dataCruda = await Weather.find({
@@ -28,5 +27,5 @@ const getWeather = async(cityId) => {
 
 module.exports = {
   createWeatherPrediction,
-  getWeather
+  getWeatherDB
 }
