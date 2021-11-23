@@ -42,8 +42,87 @@ const formatFechasPast = () => {
   return dateRange
 }
 
+const mainToCode = (main) => {
+  switch (main) {
+    case 'Thunderstorm':
+      return 1;
+    case 'Drizzle':
+      return 2;
+    case 'Rain':
+      return 3;
+    case 'Snow':
+      return 4;
+    case 'Mist':
+      return 5;
+    case 'Smoke':
+      return 6;
+    case 'Haze':
+      return 7;
+    case 'Dust':
+      return 8;
+    case 'Fog':
+      return 9;
+    case 'Sand':
+      return 10;
+    case 'Dust':
+      return 11;
+    case 'Ash':
+      return 12;
+    case 'Squall':
+      return 13;
+    case 'Tornado':
+      return 14;
+    case 'Clear':
+      return 15;
+    case 'Clouds':
+      return 16;
+  }
+  return 15;
+}
+
+const codeToMain = (main) => {
+  switch (main) {
+    case 1:
+      return 'Thunderstorm';
+    case 2:
+      return 'Drizzle';
+    case 3:
+      return 'Rain';
+    case 4:
+      return 'Snow';
+    case 5:
+      return 'Mist';
+    case 6:
+      return 'Smoke';
+    case 7:
+      return 'Haze';
+    case 8:
+      return 'Dust';
+    case 9:
+      return 'Fog';
+    case 10:
+      return 'Sand';
+    case 11:
+      return 'Dust';
+    case 12:
+      return 'Ash';
+    case 13:
+      return 'Squall';
+    case 14:
+      return 'Tornado';
+    case 15:
+      return 'Clear';
+    case 16:
+      return 'Clouds';
+  }
+  return 'Clear';
+}
+
+
 module.exports = {
   asyncForEach,
   formatWeatherDB,
-  formatFechasPast
+  formatFechasPast,
+  mainToCode,
+  codeToMain
 }

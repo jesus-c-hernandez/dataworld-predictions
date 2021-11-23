@@ -4,20 +4,37 @@ const { cityList } = require("./lists/city.list.filtered.json");
 const { asyncForEach, formatWeatherDB } = require("./utils/utils");
 const { dbConnection } = require("./database/config");
 const { getWeather } = require("./repositories/weather.repository");
-const { predictionsWeather } = require("./services/weather.service");
+const { predictionsMinWeather, predictionsMaxWeather, predictionsMainWeather, getWeatherPast } = require("./services/weather.service");
 let isDBOnline = false;
+let c = 0
 
 const initWeatherPredictions = async() => {
   // Obtener el arreglo de las ciudades
   // Hacer la peticion al bd para tener los datos de los 5 días atras
+  // let newCities = cityList.filter(w => w.id === 3435907)
+  let newCities = cityList.slice(0, 100)
   const weatherDB = await getWeather()
-  await asyncForEach(cityList, async(city) => {
+  await asyncForEach(newCities, async(city) => {
     // Dar formato al resultado de la bd
     const weatherDBFormat = formatWeatherDB(weatherDB)
-      // Predecir el clima de los proximos 5 días
+
+    // Predecir el clima de los proximos 5 días
     let n = weatherDBFormat.filter(w => Number(w.cityId) === city.id)
-    const prediciones = await predictionsWeather(city.id, n)
-    console.log(prediciones);
+    let daysPast = await getWeatherPast(city.id)
+    const predTempMin = await predictionsMinWeather(city.id, n, daysPast)
+    const predTempMax = await predictionsMaxWeather(city.id, n, daysPast)
+    const predTempMain = await predictionsMainWeather(city.id, n, daysPast)
+    const r = {
+      id: city.id,
+      nombre: city.name,
+      prediccion: {
+        predTempMax,
+        predTempMin
+      }
+    }
+
+    console.log(r);
+    console.log(predTempMain);
     // Guardar los datos en db
     // await saveWeather(city.id, city.name, city.country, listWeather);
   });
