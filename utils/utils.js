@@ -1,5 +1,3 @@
-var moment = require('moment');
-
 const asyncForEach = async(array, callback) => {
   for (let index = 0; index < array.length; index++) {
     await callback(array[index], index, array)
@@ -11,6 +9,20 @@ const formatWeatherDB = (weatherData) => {
   weatherData.forEach((element) => {
     data.push(element._doc);
   })
+  return data
+}
+
+const formatWeatherPrediccionsDB = (cityData, predData, day, i) => {
+  let data = {
+    cityId: cityData.id,
+    cityName: cityData.name,
+    country: cityData.country,
+    date: day,
+    weatherMainCode: predData.predTempMain[i].weatherMainCode,
+    weatherMain: predData.predTempMain[i].weatherMain,
+    tempMin: predData.predTempMin[i],
+    tempMax: predData.predTempMax[i]
+  }
   return data
 }
 
@@ -118,11 +130,11 @@ const codeToMain = (main) => {
   return 'Clear';
 }
 
-
 module.exports = {
   asyncForEach,
   formatWeatherDB,
   formatFechasPast,
   mainToCode,
-  codeToMain
+  codeToMain,
+  formatWeatherPrediccionsDB
 }

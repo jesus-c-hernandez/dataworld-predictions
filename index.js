@@ -3,7 +3,7 @@ const CronJob = require("cron").CronJob;
 const { cityList } = require("./lists/city.list.filtered.json");
 const { asyncForEach, formatWeatherDB } = require("./utils/utils");
 const { dbConnection } = require("./database/config");
-const { getWeather } = require("./repositories/weather.repository");
+const { getWeather, saveWeatherPrediction } = require("./services/db.service");
 const { predictionsMinWeather, predictionsMaxWeather, predictionsMainWeather, getWeatherPast } = require("./services/weather.service");
 let isDBOnline = false;
 let c = 0
@@ -15,6 +15,7 @@ const initWeatherPredictions = async() => {
   let newCities = cityList.slice(0, 100)
   const weatherDB = await getWeather()
   await asyncForEach(newCities, async(city) => {
+    console.log('ID: ' + city.id + ' - Name: ' + city.name);
     // Dar formato al resultado de la bd
     const weatherDBFormat = formatWeatherDB(weatherDB)
 
@@ -24,19 +25,14 @@ const initWeatherPredictions = async() => {
     const predTempMin = await predictionsMinWeather(city.id, n, daysPast)
     const predTempMax = await predictionsMaxWeather(city.id, n, daysPast)
     const predTempMain = await predictionsMainWeather(city.id, n, daysPast)
-    const r = {
-      id: city.id,
-      nombre: city.name,
-      prediccion: {
-        predTempMax,
-        predTempMin
-      }
+    const predictions = {
+      predTempMin,
+      predTempMax,
+      predTempMain
     }
-
-    console.log(r);
-    console.log(predTempMain);
+    console.log(predictions);
     // Guardar los datos en db
-    // await saveWeather(city.id, city.name, city.country, listWeather);
+    await saveWeatherPrediction(city, predictions);
   });
 };
 
